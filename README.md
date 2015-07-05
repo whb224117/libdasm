@@ -39,14 +39,17 @@ several ways to do it:
 - Include "libdasm.c" and compile as usual. Remember to copy "libdasm.h"
   and "opcode_tables.h" in the same directory as they are included by the
   main c-file.
+
 - Include "libdasm.h" and compile with "libdasm.c" (and remember to copy
   also "opcode_tables.h").
+
 - Compile libdasm as library and link against it statically or dynamically,
   depending on the system and your needs. Win32 DLL and Unix static/dynamic
-  libraries can be built with the supplied makefiles. See the file LIB.txt
-  for more information.
+  libraries can be built with the supplied CMake files.
+
 - Compile pydasm and use libdasm as a python module (see directory "pydasm"
   for more information).
+
 - Compile rbdasm and use libdasm as a ruby module (see directory "rbdasm"
   for more information).
 
@@ -135,8 +138,7 @@ get_instruction_string will initialize the string and terminate it
 correctly for convenience. It returns zero if the operation is not
 successful.
 
-That's it! Check out sample disassembler programs "simple.c" and "das.c"
-for examples.
+That's it! Check out sample disassembler programs for examples.
 
 
 3.3 Other libdasm functions
