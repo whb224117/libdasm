@@ -11,25 +11,24 @@
 
 #include "libdasm.h"
 
-
 // lock/rep prefix name table
 const char *rep_table[] = {
-	 "lock ", "repne ", "rep "
+    "lock ", "repne ", "rep "
 };
 
 // Register name table (also includes Jcc branch hint prefixes)
 const char *reg_table[11][8] = {
-	{ "eax",  "ecx",  "edx",  "ebx",  "esp",  "ebp",  "esi",  "edi"  },
-	{ "ax",   "cx",   "dx",   "bx",   "sp",   "bp",   "si",   "di"   },
-	{ "al",   "cl",   "dl",   "bl",   "ah",   "ch",   "dh",   "bh"   },
-	{ "es",   "cs",   "ss",   "ds",   "fs",   "gs",   "??",   "??"   },
-	{ "dr0",  "dr1",  "dr2",  "dr3",  "dr4",  "dr5",  "dr6",  "dr7"  },
-	{ "cr0",  "cr1",  "cr2",  "cr3",  "cr4",  "cr5",  "cr6",  "cr7"  },
-	{ "tr0",  "tr1",  "tr2",  "tr3",  "tr4",  "tr5",  "tr6",  "tr7"  },
-	{ "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6", "xmm7" },
-	{ "mm0",  "mm1",  "mm2",  "mm3",  "mm4",  "mm5",  "mm6",  "mm7"  },
-	{ "st(0)","st(1)","st(2)","st(3)","st(4)","st(5)","st(6)","st(7)"},
-	{ "??",   "(bnt)","??",   "(bt)", "??",   "??",   "??",   "??"   },
+    { "eax",  "ecx",  "edx",  "ebx",  "esp",  "ebp",  "esi",  "edi"  },
+    { "ax",   "cx",   "dx",   "bx",   "sp",   "bp",   "si",   "di"   },
+    { "al",   "cl",   "dl",   "bl",   "ah",   "ch",   "dh",   "bh"   },
+    { "es",   "cs",   "ss",   "ds",   "fs",   "gs",   "??",   "??"   },
+    { "dr0",  "dr1",  "dr2",  "dr3",  "dr4",  "dr5",  "dr6",  "dr7"  },
+    { "cr0",  "cr1",  "cr2",  "cr3",  "cr4",  "cr5",  "cr6",  "cr7"  },
+    { "tr0",  "tr1",  "tr2",  "tr3",  "tr4",  "tr5",  "tr6",  "tr7"  },
+    { "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6", "xmm7" },
+    { "mm0",  "mm1",  "mm2",  "mm3",  "mm4",  "mm5",  "mm6",  "mm7"  },
+    { "st(0)","st(1)","st(2)","st(3)","st(4)","st(5)","st(6)","st(7)"},
+    { "??",   "(bnt)","??",   "(bt)", "??",   "??",   "??",   "??"   },
 };
 
 // Name table index
@@ -47,14 +46,14 @@ const char *reg_table[11][8] = {
 
 // 1-byte opcodes
 INST inst_table1[256] = {
-	{ INSTRUCTION_TYPE_ADD,    "add",       AM_E|OT_b|P_w,               AM_G|OT_b|P_r,             FLAGS_NONE,   1, EFL_MATH, 0, 0, 0 },
-	{ INSTRUCTION_TYPE_ADD,    "add",       AM_E|OT_v|P_w,               AM_G|OT_v|P_r,             FLAGS_NONE,   1, EFL_MATH, 0, 0, 0 },
-	{ INSTRUCTION_TYPE_ADD,    "add",       AM_G|OT_b|P_w,               AM_E|OT_b|P_r,             FLAGS_NONE,   1, EFL_MATH, 0, 0, 0 },
-	{ INSTRUCTION_TYPE_ADD,    "add",       AM_G|OT_v|P_w,               AM_E|OT_v|P_r,             FLAGS_NONE,   1, EFL_MATH, 0, 0, 0 },
-	{ INSTRUCTION_TYPE_ADD,    "add",       AM_REG|REG_EAX|OT_b|P_w,     AM_I|OT_b|P_r,             FLAGS_NONE,   0, EFL_MATH, 0, 0, 0 },
-	{ INSTRUCTION_TYPE_ADD,    "add",       AM_REG|REG_EAX|OT_v|P_w,     AM_I|OT_v|P_r,             FLAGS_NONE,   0, EFL_MATH, 0, 0, 0 },
-	{ INSTRUCTION_TYPE_PUSH,   "push",      AM_REG|REG_ES|F_r|P_r,       FLAGS_NONE,                FLAGS_NONE,   0, 0, 0, IOP_ESP, IOP_ESP },
-	{ INSTRUCTION_TYPE_POP,    "pop",       AM_REG|REG_ES|F_r|P_w,       FLAGS_NONE,                FLAGS_NONE,   0, 0, 0, IOP_ESP, IOP_ESP },
+    { INSTRUCTION_TYPE_ADD,    "add",       AM_E|OT_b|P_w,               AM_G|OT_b|P_r,             FLAGS_NONE,   1, EFL_MATH, 0, 0, 0 },
+    { INSTRUCTION_TYPE_ADD,    "add",       AM_E|OT_v|P_w,               AM_G|OT_v|P_r,             FLAGS_NONE,   1, EFL_MATH, 0, 0, 0 },
+    { INSTRUCTION_TYPE_ADD,    "add",       AM_G|OT_b|P_w,               AM_E|OT_b|P_r,             FLAGS_NONE,   1, EFL_MATH, 0, 0, 0 },
+    { INSTRUCTION_TYPE_ADD,    "add",       AM_G|OT_v|P_w,               AM_E|OT_v|P_r,             FLAGS_NONE,   1, EFL_MATH, 0, 0, 0 },
+    { INSTRUCTION_TYPE_ADD,    "add",       AM_REG|REG_EAX|OT_b|P_w,     AM_I|OT_b|P_r,             FLAGS_NONE,   0, EFL_MATH, 0, 0, 0 },
+    { INSTRUCTION_TYPE_ADD,    "add",       AM_REG|REG_EAX|OT_v|P_w,     AM_I|OT_v|P_r,             FLAGS_NONE,   0, EFL_MATH, 0, 0, 0 },
+    { INSTRUCTION_TYPE_PUSH,   "push",      AM_REG|REG_ES|F_r|P_r,       FLAGS_NONE,                FLAGS_NONE,   0, 0, 0, IOP_ESP, IOP_ESP },
+    { INSTRUCTION_TYPE_POP,    "pop",       AM_REG|REG_ES|F_r|P_w,       FLAGS_NONE,                FLAGS_NONE,   0, 0, 0, IOP_ESP, IOP_ESP },
 	{ INSTRUCTION_TYPE_OR,     "or",        AM_E|OT_b|P_w,               AM_G|OT_b|P_r,             FLAGS_NONE,   1, EFL_BITWISE, 0, 0, 0 },
 	{ INSTRUCTION_TYPE_OR,     "or",        AM_E|OT_v|P_w,               AM_G|OT_v|P_r,             FLAGS_NONE,   1, EFL_BITWISE, 0, 0, 0 },
 	{ INSTRUCTION_TYPE_OR,     "or",        AM_G|OT_b|P_w,               AM_E|OT_b|P_r,             FLAGS_NONE,   1, EFL_BITWISE, 0, 0, 0 },

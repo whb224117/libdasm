@@ -1,6 +1,8 @@
 libdasm -- simple x86 disassembly library
 =========================================
+
 (c) 2004 - 2006    jt <at> klake.org
+
 (c) 2015         mail <at> alexeevdv.ru
 
 1. Acknowledgements
@@ -59,11 +61,13 @@ the instruction. This structure, defined as struct INSTRUCTION, can be
 later used for formatting the instruction to printable form or for
 analyzing the instruction contents. It is defined as follows:
 
+```
 int get_instruction(
       INSTRUCTION *inst,      // pointer to INSTRUCTION structure
       BYTE *addr,             // data buffer
       enum Mode mode          // mode: MODE_32 or MODE_16
 );
+```
 
 First argument is a refence to INSTRUCTION structure. There is no
 need to initialize the structure prior to function call, get_instruction
@@ -87,6 +91,7 @@ get_instruction_string or do analysis of the instruction members. When
 ready, increment data buffer pointer to next instruction and call
 get_instruction again. Here is pseudocode presenting this procedure:
 
+```
 	INSTRUCTION inst;
 	int len, buflen, c = 0;
 	BYTE *buf;
@@ -99,8 +104,7 @@ get_instruction again. Here is pseudocode presenting this procedure:
 		c  += len;
 
 	} while (c < buflen);
-
-
+```
 
 3.2. get_instruction_string
 ===========================
@@ -109,6 +113,7 @@ get_instruction_string parses the instruction structure and fills in
 a string presenting the instruction in given format. Currently,
 ATT and Intel formats are supported. The function is defined as:
 
+```
 int get_instruction_string(
         INSTRUCTION *instr,     // pointer to INSTRUCTION structure
         enum Format format,     // format: FORMAT_ATT or FORMAT_INTEL
@@ -116,6 +121,7 @@ int get_instruction_string(
         char *string,           // string buffer
         int length              // string length
 );
+```
 
 The offset is needed only if you need to make relational offsets look
 nice (jmp/call/loop etc.). If you are parsing instructions in known 
@@ -141,6 +147,7 @@ instruction formatting etc. For example, get_instruction_string calls
 get_mnemonic_string and get_operand_string for simple instruction
 formatting. These functions are defined as:
 
+```
 int get_mnemonic_string(
 	INSTRUCTION *inst,
 	enum Format format,
@@ -156,6 +163,7 @@ int get_operand_string(
 	char *string,
 	int length
 );
+```
 
 Both functions initialize and terminate the string buffer and return
 data formatted as defined in member "format". There are also many
@@ -173,6 +181,7 @@ components that make up an instruction, you will need this information.
 All libdasm functions inspect and/or manipulate INSTRUCTION structure.
 It is defined as follows:
 
+```
 typedef struct _INSTRUCTION {
         int length;             // Instruction length
         enum Instruction type;  // Instruction type
@@ -190,6 +199,7 @@ typedef struct _INSTRUCTION {
         OPERAND op3;            // Additional operand (if any)
         int flags;		// Instruction flags
 } INSTRUCTION, *PINSTRUCTION;
+```
 
 Most important members are probably "length", "opcode", and the operands.
 "length" is the instruction size, also returned by get_instruction.
@@ -197,7 +207,8 @@ If the instruction size is zero, the instruction is illegal. "opcode" is the
 instruction opcode byte. Some of the most common instructions also have a
 meaningful "type" member. This member can have one of the following values:
 
-	INSTRUCTION_TYPE_MOV,
+```
+        INSTRUCTION_TYPE_MOV,
         INSTRUCTION_TYPE_ADD,
         INSTRUCTION_TYPE_SUB,
         INSTRUCTION_TYPE_INC,
@@ -222,6 +233,7 @@ meaningful "type" member. This member can have one of the following values:
         INSTRUCTION_TYPE_INT,   // interrupt
         INSTRUCTION_TYPE_FPU,   // FPU-related instruction
         INSTRUCTION_TYPE_OTHER, // Other instructions :-)
+```
 
 The list above is not complete, check out libdasm.h for complete listing of
 all possible instruction types.
@@ -230,6 +242,7 @@ Individual operands can be accessed by the OPERAND structures. All instructions
 have 0-3 operands which are ordered in INTEL order (op1 is the first operand in
 INTEL syntax). struct OPERAND is defined as:
 
+```
 typedef struct _OPERAND {
         enum Operand type;      // Operand type (register, memory, etc)
         int reg;                // Register (if any)
@@ -246,14 +259,17 @@ typedef struct _OPERAND {
         DWORD immediate;        // Immediate value
         int flags;		// Operand flags
 } OPERAND, *POPERAND;
+```
 
 Operand type is always defined in member "type". This member can have one
 of the following values:
 
+```
         OPERAND_TYPE_NONE
         OPERAND_TYPE_MEMORY
         OPERAND_TYPE_REGISTER
         OPERAND_TYPE_IMMEDIATE
+```
 
 If the type is OPERAND_TYPE_NONE, operand is not present in the instruction.
 
@@ -275,6 +291,7 @@ Example: in "mov eax, 0x11" second operand "immediate" value is 0x11.
 If present, register members "reg", "basereg" and "indexreg" can have one
 of the following values:
 
+```
 	REGISTER_EAX
 	REGISTER_ECX
 	REGISTER_EDX
@@ -283,6 +300,7 @@ of the following values:
 	REGISTER_EBP
 	REGISTER_ESI
 	REGISTER_EDI
+```
 
 If registers are not present, they are defined as REGISTER_NOP. Note that
 the register is not necessarily general purpose register. Only way to
@@ -290,6 +308,7 @@ detect this is to inspect operand flags. You can also use helper function
 get_register_type for determining the register type. Register type can
 be one of the following:
 
+```
 	REGISTER_TYPE_GEN
 	REGISTER_TYPE_SEGMENT 
 	REGISTER_TYPE_DEBUG 
@@ -298,6 +317,7 @@ be one of the following:
 	REGISTER_TYPE_XMM
 	REGISTER_TYPE_MMX
 	REGISTER_TYPE_FPU
+```
 
 get_register_type returns some of the values only if the operand type
 is OPERAND_TYPE_REGISTER. If the operand is OPERAND_TYPE_MEMORY, the
@@ -321,21 +341,29 @@ Libdasm is modelled after the assumption that there is only one memory
 operand at maximum in the instruction. If there is segment register override,
 the segment register is placed in front of the memory operand, like this:
 
+```
   mov eax, fs:[0x30]
+```
 
 If there are no memory operands, the segment prefix is placed in front of
 the instruction:
 
+```
   fs mov eax, 0x30
+```
 
 Some string instructions are also considered containing no memory operands,
 like cmps. In reality, it contains two memory operands. So the following:
 
+```
   fs cmpsd 
+```
 
 is equivalent to:
 
+```
   cmpsd fs:[esi], es:[edi]
+```
 
 And btw, if you are wondering what are those weird "(bt)" and "(bnt)"
 prefixes in front of conditional jumps, they are branch hint prefixes 

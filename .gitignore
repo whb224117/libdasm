@@ -3,5 +3,5 @@ CMakeCache.txt
 Makefile
 *.a
 *.so
-*.cmake
+cmake_install.cmake
 
