@@ -1,9 +1,9 @@
 libdasm -- simple x86 disassembly library
 =========================================
 
-(c) 2004 - 2006    jt <at> klake.org
+2004 - 2006 (c) jt@klake.org
 
-(c) 2015         mail <at> alexeevdv.ru
+2015 (c) mail@alexeevdv.ru
 
 1. Acknowledgements
 ===================
@@ -61,7 +61,7 @@ the instruction. This structure, defined as struct INSTRUCTION, can be
 later used for formatting the instruction to printable form or for
 analyzing the instruction contents. It is defined as follows:
 
-```
+```C
 int get_instruction(
       INSTRUCTION *inst,      // pointer to INSTRUCTION structure
       BYTE *addr,             // data buffer
@@ -91,19 +91,19 @@ get_instruction_string or do analysis of the instruction members. When
 ready, increment data buffer pointer to next instruction and call
 get_instruction again. Here is pseudocode presenting this procedure:
 
-```
-	INSTRUCTION inst;
-	int len, buflen, c = 0;
-	BYTE *buf;
+```C
+INSTRUCTION inst;
+int len, buflen, c = 0;
+BYTE *buf;
 
-	do {
-		len = get_instruction(&inst, buf+c, MODE_32);
-
-		// do something with the instruction
-
-		c  += len;
-
-	} while (c < buflen);
+do {
+    len = get_instruction(&inst, buf+c, MODE_32);
+    
+    // do something with the instruction
+    
+    c  += len;
+    
+} while (c < buflen);
 ```
 
 3.2. get_instruction_string
@@ -113,13 +113,13 @@ get_instruction_string parses the instruction structure and fills in
 a string presenting the instruction in given format. Currently,
 ATT and Intel formats are supported. The function is defined as:
 
-```
+```C
 int get_instruction_string(
-        INSTRUCTION *instr,     // pointer to INSTRUCTION structure
-        enum Format format,     // format: FORMAT_ATT or FORMAT_INTEL
-        DWORD offset,           // instruction absolute address
-        char *string,           // string buffer
-        int length              // string length
+    INSTRUCTION *instr,     // pointer to INSTRUCTION structure
+    enum Format format,     // format: FORMAT_ATT or FORMAT_INTEL
+    DWORD offset,           // instruction absolute address
+    char *string,           // string buffer
+    int length              // string length
 );
 ```
 
@@ -147,21 +147,21 @@ instruction formatting etc. For example, get_instruction_string calls
 get_mnemonic_string and get_operand_string for simple instruction
 formatting. These functions are defined as:
 
-```
+```C
 int get_mnemonic_string(
-	INSTRUCTION *inst,
-	enum Format format,
-	char *string,
-	int length
+    INSTRUCTION *inst,
+    enum Format format,
+    char *string,
+    int length
 );
 
 int get_operand_string(
-	INSTRUCTION *inst,
-	OPERAND *op,
-	enum Format format,
-	DWORD offset,
-	char *string,
-	int length
+    INSTRUCTION *inst,
+    OPERAND *op,
+    enum Format format,
+    DWORD offset,
+    char *string,
+    int length
 );
 ```
 
@@ -181,23 +181,23 @@ components that make up an instruction, you will need this information.
 All libdasm functions inspect and/or manipulate INSTRUCTION structure.
 It is defined as follows:
 
-```
+```C
 typedef struct _INSTRUCTION {
-        int length;             // Instruction length
-        enum Instruction type;  // Instruction type
-	enum Mode mode;         // Addressing mode
-        BYTE opcode;            // Actual opcode
-        BYTE modrm;             // MODRM byte
-        BYTE sib;               // SIB byte
-	int extindex;           // Extension table index
-	int fpuindex;           // FPU table index
-        int dispbytes;          // Displacement bytes (0 = no displacement)
-        int immbytes;           // Immediate bytes (0 = no immediate)
-        int sectionbytes;       // Section prefix bytes (0 = no section prefix)
-        OPERAND op1;            // First operand (if any)
-        OPERAND op2;            // Second operand (if any)
-        OPERAND op3;            // Additional operand (if any)
-        int flags;		// Instruction flags
+    int length;             // Instruction length
+    enum Instruction type;  // Instruction type
+    enum Mode mode;         // Addressing mode
+    BYTE opcode;            // Actual opcode
+    BYTE modrm;             // MODRM byte
+    BYTE sib;               // SIB byte
+    int extindex;           // Extension table index
+    int fpuindex;           // FPU table index
+    int dispbytes;          // Displacement bytes (0 = no displacement)
+    int immbytes;           // Immediate bytes (0 = no immediate)
+    int sectionbytes;       // Section prefix bytes (0 = no section prefix)
+    OPERAND op1;            // First operand (if any)
+    OPERAND op2;            // Second operand (if any)
+    OPERAND op3;            // Additional operand (if any)
+    int flags;		// Instruction flags
 } INSTRUCTION, *PINSTRUCTION;
 ```
 
@@ -207,32 +207,32 @@ If the instruction size is zero, the instruction is illegal. "opcode" is the
 instruction opcode byte. Some of the most common instructions also have a
 meaningful "type" member. This member can have one of the following values:
 
-```
-        INSTRUCTION_TYPE_MOV,
-        INSTRUCTION_TYPE_ADD,
-        INSTRUCTION_TYPE_SUB,
-        INSTRUCTION_TYPE_INC,
-        INSTRUCTION_TYPE_DEC,
-        INSTRUCTION_TYPE_DIV,
-        INSTRUCTION_TYPE_MUL,
-        INSTRUCTION_TYPE_IMUL,
-        INSTRUCTION_TYPE_XOR,
-        INSTRUCTION_TYPE_LEA,
-        INSTRUCTION_TYPE_XCHG,
-        INSTRUCTION_TYPE_CMP,
-        INSTRUCTION_TYPE_TEST,
-        INSTRUCTION_TYPE_PUSH,	// includes enter, pusha and pushf
-        INSTRUCTION_TYPE_AND,
-        INSTRUCTION_TYPE_OR,
-        INSTRUCTION_TYPE_POP,	// includes popa and popf
-        INSTRUCTION_TYPE_JMP,	// includes jmpf
-        INSTRUCTION_TYPE_JMPC,  // conditional jump
-        INSTRUCTION_TYPE_LOOP,
-        INSTRUCTION_TYPE_CALL,	// includes callf
-        INSTRUCTION_TYPE_RET,	// includes leave, retn and retf
-        INSTRUCTION_TYPE_INT,   // interrupt
-        INSTRUCTION_TYPE_FPU,   // FPU-related instruction
-        INSTRUCTION_TYPE_OTHER, // Other instructions :-)
+```C
+INSTRUCTION_TYPE_MOV,
+INSTRUCTION_TYPE_ADD,
+INSTRUCTION_TYPE_SUB,
+INSTRUCTION_TYPE_INC,
+INSTRUCTION_TYPE_DEC,
+INSTRUCTION_TYPE_DIV,
+INSTRUCTION_TYPE_MUL,
+INSTRUCTION_TYPE_IMUL,
+INSTRUCTION_TYPE_XOR,
+INSTRUCTION_TYPE_LEA,
+INSTRUCTION_TYPE_XCHG,
+INSTRUCTION_TYPE_CMP,
+INSTRUCTION_TYPE_TEST,
+INSTRUCTION_TYPE_PUSH,	// includes enter, pusha and pushf
+INSTRUCTION_TYPE_AND,
+INSTRUCTION_TYPE_OR,
+INSTRUCTION_TYPE_POP,	// includes popa and popf
+INSTRUCTION_TYPE_JMP,	// includes jmpf
+INSTRUCTION_TYPE_JMPC,  // conditional jump
+INSTRUCTION_TYPE_LOOP,
+INSTRUCTION_TYPE_CALL,	// includes callf
+INSTRUCTION_TYPE_RET,	// includes leave, retn and retf
+INSTRUCTION_TYPE_INT,   // interrupt
+INSTRUCTION_TYPE_FPU,   // FPU-related instruction
+INSTRUCTION_TYPE_OTHER, // Other instructions :-)
 ```
 
 The list above is not complete, check out libdasm.h for complete listing of
@@ -242,33 +242,33 @@ Individual operands can be accessed by the OPERAND structures. All instructions
 have 0-3 operands which are ordered in INTEL order (op1 is the first operand in
 INTEL syntax). struct OPERAND is defined as:
 
-```
+```C
 typedef struct _OPERAND {
-        enum Operand type;      // Operand type (register, memory, etc)
-        int reg;                // Register (if any)
-        int basereg;            // Base register (if any)
-        int indexreg;           // Index register (if any)
-        int scale;              // Scale (if any)
-        int dispbytes;          // Displacement bytes (0 = no displacement)
-        int dispoffset;         // Displacement offset (0 = no diplacement)
-        int immbytes;           // Immediate bytes (0 = no immediate)
-        int immoffset;          // Immediate offset (0 = no immediate)
-        int sectionbytes;       // Section prefix bytes (0 = no section prefix)
-        WORD section;           // Section prefix value
-        DWORD displacement;     // Displacement value
-        DWORD immediate;        // Immediate value
-        int flags;		// Operand flags
+    enum Operand type;      // Operand type (register, memory, etc)
+    int reg;                // Register (if any)
+    int basereg;            // Base register (if any)
+    int indexreg;           // Index register (if any)
+    int scale;              // Scale (if any)
+    int dispbytes;          // Displacement bytes (0 = no displacement)
+    int dispoffset;         // Displacement offset (0 = no diplacement)
+    int immbytes;           // Immediate bytes (0 = no immediate)
+    int immoffset;          // Immediate offset (0 = no immediate)
+    int sectionbytes;       // Section prefix bytes (0 = no section prefix)
+    WORD section;           // Section prefix value
+    DWORD displacement;     // Displacement value
+    DWORD immediate;        // Immediate value
+    int flags;		// Operand flags
 } OPERAND, *POPERAND;
 ```
 
 Operand type is always defined in member "type". This member can have one
 of the following values:
 
-```
-        OPERAND_TYPE_NONE
-        OPERAND_TYPE_MEMORY
-        OPERAND_TYPE_REGISTER
-        OPERAND_TYPE_IMMEDIATE
+```C
+    OPERAND_TYPE_NONE
+    OPERAND_TYPE_MEMORY
+    OPERAND_TYPE_REGISTER
+    OPERAND_TYPE_IMMEDIATE
 ```
 
 If the type is OPERAND_TYPE_NONE, operand is not present in the instruction.
@@ -279,8 +279,10 @@ If the type is OPERAND_TYPE_MEMORY, some combination of the members
 "basereg", "indexreg", "scale", "dispbytes" and "displacement" is present.
 These members form the memory operand as follows:
 
+```
 	[ basereg + scale * indexreg + displacement ] (INTEL)
 	displacement(basereg, indexreg, scale)        (ATT)
+```
 
 If the type is OPERAND_TYPE_IMMEDIATE, some combination of the members
 "immbytes", "sectionbytes", "section" and "immediate" is present.
@@ -292,14 +294,14 @@ If present, register members "reg", "basereg" and "indexreg" can have one
 of the following values:
 
 ```
-	REGISTER_EAX
-	REGISTER_ECX
-	REGISTER_EDX
-	REGISTER_EBX
-	REGISTER_ESP
-	REGISTER_EBP
-	REGISTER_ESI
-	REGISTER_EDI
+REGISTER_EAX
+REGISTER_ECX
+REGISTER_EDX
+REGISTER_EBX
+REGISTER_ESP
+REGISTER_EBP
+REGISTER_ESI
+REGISTER_EDI
 ```
 
 If registers are not present, they are defined as REGISTER_NOP. Note that
@@ -309,14 +311,14 @@ get_register_type for determining the register type. Register type can
 be one of the following:
 
 ```
-	REGISTER_TYPE_GEN
-	REGISTER_TYPE_SEGMENT 
-	REGISTER_TYPE_DEBUG 
-	REGISTER_TYPE_CONTROL 
-	REGISTER_TYPE_TEST
-	REGISTER_TYPE_XMM
-	REGISTER_TYPE_MMX
-	REGISTER_TYPE_FPU
+REGISTER_TYPE_GEN
+REGISTER_TYPE_SEGMENT 
+REGISTER_TYPE_DEBUG 
+REGISTER_TYPE_CONTROL 
+REGISTER_TYPE_TEST
+REGISTER_TYPE_XMM
+REGISTER_TYPE_MMX
+REGISTER_TYPE_FPU
 ```
 
 get_register_type returns some of the values only if the operand type
@@ -341,28 +343,28 @@ Libdasm is modelled after the assumption that there is only one memory
 operand at maximum in the instruction. If there is segment register override,
 the segment register is placed in front of the memory operand, like this:
 
-```
-  mov eax, fs:[0x30]
+```asm
+mov eax, fs:[0x30]
 ```
 
 If there are no memory operands, the segment prefix is placed in front of
 the instruction:
 
-```
-  fs mov eax, 0x30
+```asm
+fs mov eax, 0x30
 ```
 
 Some string instructions are also considered containing no memory operands,
 like cmps. In reality, it contains two memory operands. So the following:
 
-```
-  fs cmpsd 
+```asm
+fs cmpsd 
 ```
 
 is equivalent to:
 
-```
-  cmpsd fs:[esi], es:[edi]
+```asm
+cmpsd fs:[esi], es:[edi]
 ```
 
 And btw, if you are wondering what are those weird "(bt)" and "(bnt)"
